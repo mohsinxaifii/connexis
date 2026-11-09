@@ -29,8 +29,8 @@ jobs:
       - run: npm ci
       - run: npm run build
         env:
-          # Leave BASE_PATH empty once a custom domain points at Pages; until then it is /<repo>/.
-          BASE_PATH: ${{ vars.BASE_PATH }}
+          # Defaults to /<repo>/ for github.io. With a custom domain, set the BASE_PATH variable to /.
+          BASE_PATH: ${{ vars.BASE_PATH || format('/{0}/', github.event.repository.name) }}
           VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
           VITE_NOINDEX: ${{ vars.VITE_NOINDEX }}
           VITE_GTM_ID: ${{ vars.VITE_GTM_ID }}
