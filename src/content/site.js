@@ -1,7 +1,7 @@
-// Site-wide settings (spec §9.2 "Settings"). Facts come only from the Connexis Company Profile 2026.
-// Anything marked CONFIRM must be checked with Connexis before launch (spec §10.1).
+// Site-wide settings . Facts come only from the Connexis Company Profile 2026.
+// Anything marked CONFIRM must be checked with Connexis before launch .
 
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.connexistracking.com";
+export const SITE_URL = import.meta.env.VITE_SITE_URL || "https://www.connexistracking.com";
 
 export const site = {
   name: "Connexis",
@@ -23,21 +23,22 @@ export const site = {
   ],
   email: "info@connexistracking.com",
   // CONFIRM: the WhatsApp Business number. Falls back to the second landline until confirmed.
-  whatsapp: process.env.NEXT_PUBLIC_WHATSAPP || "924234500786",
+  whatsapp: import.meta.env.VITE_WHATSAPP || "924234500786",
   customerLogin: "https://webtrack.connexistracking.com",
   // CONFIRM: real app store links (the current site's Android link points to the Apple store).
-  appStore: process.env.NEXT_PUBLIC_APP_STORE_URL || null,
-  playStore: process.env.NEXT_PUBLIC_PLAY_STORE_URL || null,
+  appStore: import.meta.env.VITE_APP_STORE_URL || null,
+  playStore: import.meta.env.VITE_PLAY_STORE_URL || null,
   // CONFIRM: real social profile URLs. Empty entries never render (no facebook.com dummies).
   social: [],
   ptaLicence: "Nationwide PTA licence for Data Class Value Added Services",
   // CONFIRM: ISO standard + certificate number before showing the badge.
-  iso: null,
+  // Shown on the live connexistracking.com site; CONFIRM the certificate number before quoting it.
+  iso: "ISO 9001 certified",
   // CONFIRM: call-back time for new leads.
   callbackPromise: "A Connexis consultant will call you within one working day.",
 };
 
-// Proof stats, server-rendered so crawlers always read the real number (spec §5.3).
+// Proof stats, server-rendered so crawlers always read the real number .
 export const stats = [
   { value: 150000, suffix: "+", label: "devices installed", source: "Company Profile 2026" },
   { value: 2015, suffix: "", label: "operating since", source: "Company Profile 2026", plain: true },

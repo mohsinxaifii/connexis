@@ -1,4 +1,4 @@
-// Service pages (spec §6). One template, filled from this data (the "Service" CMS model in §9.2).
+// Service pages . One template, filled from this data (the "Service" CMS model in §9.2).
 // FAQ items with `pending: true` are waiting on a technical answer from Connexis and never render.
 
 const howItWorks = [
@@ -424,7 +424,7 @@ export const services = [
   },
 ];
 
-// Low-priority lines: footer-linked only, never on the home page (spec §1, §6.10).
+// Low-priority lines: footer-linked only, never on the home page .
 export const lowServices = [
   {
     slug: "cctv-surveillance",

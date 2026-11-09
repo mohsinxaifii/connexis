@@ -1,4 +1,4 @@
-// Case studies (spec §5.4, §7.3; "CaseStudy" model in §9.2).
+// Case studies .
 // Only Pepsi and Meezan have approved metrics. Tiles 3–6 show what was delivered, never an invented
 // number, and their detail pages stay noindex until Connexis approves name, metric and photos.
 

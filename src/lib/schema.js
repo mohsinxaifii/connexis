@@ -1,5 +1,5 @@
 import { SITE_URL, site } from "@/content/site";
-import { abs } from "@/lib/seo";
+import { abs } from "@/lib/head";
 
 const ORG_ID = `${SITE_URL}/#org`;
 
@@ -37,24 +37,13 @@ export function localBusiness() {
 }
 
 export function website() {
-  return {
-    "@type": "WebSite",
-    "@id": `${SITE_URL}/#website`,
-    url: `${SITE_URL}/`,
-    name: "Connexis",
-    publisher: { "@id": ORG_ID },
-  };
+  return { "@type": "WebSite", "@id": `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: "Connexis", publisher: { "@id": ORG_ID } };
 }
 
 export function breadcrumbs(items) {
   return {
     "@type": "BreadcrumbList",
-    itemListElement: items.map((it, i) => ({
-      "@type": "ListItem",
-      position: i + 1,
-      name: it.name,
-      item: abs(it.href),
-    })),
+    itemListElement: items.map((it, i) => ({ "@type": "ListItem", position: i + 1, name: it.name, item: abs(it.href) })),
   };
 }
 
@@ -63,11 +52,7 @@ export function faqPage(faqs) {
   if (!list.length) return null;
   return {
     "@type": "FAQPage",
-    mainEntity: list.map((f) => ({
-      "@type": "Question",
-      name: f.q,
-      acceptedAnswer: { "@type": "Answer", text: f.a },
-    })),
+    mainEntity: list.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
   };
 }
 
@@ -87,7 +72,7 @@ export function article({ headline, path, date }) {
   return {
     "@type": "Article",
     headline,
-    image: abs("/opengraph-image"),
+    image: abs("/og.png"),
     datePublished: date,
     author: { "@id": ORG_ID },
     publisher: { "@id": ORG_ID },

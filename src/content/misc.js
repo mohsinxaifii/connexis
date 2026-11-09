@@ -1,6 +1,6 @@
 // Shared lists: client names, platform reports, FAQs, portfolio mix.
 
-// ClientLogo model (spec §9.2). Official SVG logos render only once `approved` is true and
+// ClientLogo model . Official SVG logos render only once `approved` is true and
 // `logo` is set; until then the marquee shows the name as a neutral wordmark.
 export const clients = [
   { name: "PepsiCo distributor", industry: "fmcg-distribution", approved: false, logo: null },

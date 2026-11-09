@@ -1,10 +1,7 @@
-"use client";
-
-import { useActionState, useEffect, useRef } from "react";
-import Script from "next/script";
-import { Loader2 } from "lucide-react";
-import { submitLead } from "@/app/actions";
+import { useRef, useState } from "react";
+import { Loader2, ArrowRight } from "lucide-react";
 import { track } from "@/lib/analytics";
+import { site } from "@/content/site";
 
 const FLEET = ["1-10", "11-50", "51-200", "200+"];
 const FLEET_LABEL = { "1-10": "1–10", "11-50": "11–50", "51-200": "51–200", "200+": "200+" };
@@ -18,19 +15,65 @@ const DIAL = [
 ];
 const CITIES = ["Lahore", "Karachi", "Islamabad", "Rawalpindi", "Faisalabad", "Multan", "Peshawar", "Quetta", "Gilgit", "Sialkot", "Gujranwala", "Hyderabad"];
 
-const SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+// Web3Forms relays the POST to the sales inbox by email (its access key is a public form id).
+// An optional webhook (CRM / Zapier / Make) receives the same lead as JSON.
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY;
+const WEBHOOK = import.meta.env.VITE_LEAD_WEBHOOK_URL;
 
-// The demo form (spec §5.10). Same component everywhere; `service` pre-selects an interest chip.
-export default function DemoForm({ location = "page", service, caseSlug, compact = false, id = "demo-form" }) {
-  const [state, action, pending] = useActionState(submitLead, { ok: null });
+const clean = (v) => String(v || "").replace(/<[^>]*>/g, "").replace(/[\u0000-\u001f]/g, " ").trim();
+
+function validate(v) {
+  const e = {};
+  if (v.name.length < 2) e.name = "Please enter your name";
+  if (v.company.length < 2) e.company = "Please enter your company";
+  if (!/^[\d\s-]{6,19}$/.test(v.phone)) e.phone = "Please enter a valid phone number";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.email)) e.email = "Please enter a valid email";
+  if (!FLEET.includes(v.fleet)) e.fleet = "Please choose your fleet size";
+  if (v.city.length < 2) e.city = "Please enter your city";
+  return e;
+}
+
+async function deliver(lead) {
+  const jobs = [];
+  if (WEB3FORMS_KEY) {
+    jobs.push(
+      fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `Demo request: ${lead.company} (${lead.fleet} vehicles)`,
+          from_name: "Connexis website",
+          replyto: lead.email,
+          ...lead,
+          interests: lead.interests.join(", "),
+        }),
+      }).then(async (r) => {
+        const d = await r.json().catch(() => ({}));
+        if (!r.ok || !d.success) throw new Error(d.message || "Web3Forms rejected the lead");
+      })
+    );
+  }
+  if (WEBHOOK) {
+    jobs.push(fetch(WEBHOOK, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(lead), mode: "no-cors" }));
+  }
+  if (!jobs.length) {
+    if (import.meta.env.DEV) {
+      console.info("[lead] no VITE_WEB3FORMS_KEY set; lead not sent", lead);
+      return;
+    }
+    throw new Error("Lead delivery is not configured");
+  }
+  const results = await Promise.allSettled(jobs);
+  if (results.every((r) => r.status === "rejected")) throw results[0].reason;
+}
+
+export default function DemoForm({ location = "page", service, caseSlug, id = "demo-form" }) {
+  const [errors, setErrors] = useState({});
+  const [formError, setFormError] = useState("");
+  const [pending, setPending] = useState(false);
   const started = useRef(false);
-  const errorRef = useRef(null);
-  const v = state?.values || {};
-  const err = state?.errors || {};
-
-  useEffect(() => {
-    if (state?.errors || state?.formError) errorRef.current?.focus();
-  }, [state]);
+  const alertRef = useRef(null);
 
   const onStart = () => {
     if (started.current) return;
@@ -38,98 +81,122 @@ export default function DemoForm({ location = "page", service, caseSlug, compact
     track("form_start", { form_location: location });
   };
 
-  const selected = v.interests || (service ? [service] : []);
-  const errCount = Object.keys(err).length;
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.currentTarget);
+    if (fd.get("website")) return;
+    const v = {
+      name: clean(fd.get("name")),
+      company: clean(fd.get("company")),
+      phone: clean(fd.get("phone")),
+      email: clean(fd.get("email")),
+      fleet: clean(fd.get("fleet")),
+      interests: fd.getAll("interests").map(clean),
+      city: clean(fd.get("city")),
+    };
+    const errs = validate(v);
+    setErrors(errs);
+    setFormError("");
+    if (Object.keys(errs).length) {
+      requestAnimationFrame(() => alertRef.current?.focus());
+      return;
+    }
+    const lead = {
+      ...v,
+      phone: `${clean(fd.get("dial")) || "+92"} ${v.phone}`,
+      service: service || "",
+      caseSlug: caseSlug || "",
+      location,
+      page: window.location.href,
+      submittedAt: new Date().toISOString(),
+    };
+    setPending(true);
+    try {
+      await deliver(lead);
+      track("generate_lead", { form_location: location, fleet_size: lead.fleet, service: lead.service || lead.interests[0] || "" });
+      const q = new URLSearchParams({ fleet: lead.fleet, service: lead.service || lead.interests[0] || "" });
+      window.dispatchEvent(new CustomEvent("cx:navigate", { detail: { to: `/thank-you/?${q}` } }));
+    } catch {
+      setFormError(`We couldn't send your request. Please call ${site.phones[0].label} or WhatsApp us, and we'll set up the demo by phone.`);
+      requestAnimationFrame(() => alertRef.current?.focus());
+    } finally {
+      setPending(false);
+    }
+  };
+
+  const errCount = Object.keys(errors).length;
+  const describe = (k) => (errors[k] ? { "aria-invalid": true, "aria-describedby": `${id}-${k}-err` } : {});
 
   return (
-    <form action={action} onFocus={onStart} noValidate className="grid gap-5" id={id} aria-describedby={`${id}-note`}>
-      <input type="hidden" name="location" value={location} />
-      {service && <input type="hidden" name="service" value={service} />}
-      {caseSlug && <input type="hidden" name="case" value={caseSlug} />}
-      <div aria-hidden="true" className="absolute left-[-9999px] h-px w-px overflow-hidden">
+    <form className="form" id={id} noValidate onSubmit={onSubmit} onFocus={onStart} aria-describedby={`${id}-note`}>
+      <div className="hp" aria-hidden="true">
         <label>
           Website <input type="text" name="website" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
 
-      {(errCount > 0 || state?.formError) && (
-        <div ref={errorRef} tabIndex={-1} role="alert" className="rounded-lg border border-red-500 bg-red-050 p-4 text-[15px] text-ink-900 outline-none">
-          {state.formError || `Please check ${errCount === 1 ? "one field" : `${errCount} fields`} below.`}
+      {(errCount > 0 || formError) && (
+        <div ref={alertRef} tabIndex={-1} role="alert" className="form__alert">
+          {formError || `Please check ${errCount === 1 ? "one field" : `${errCount} fields`} below.`}
         </div>
       )}
 
-      <div className={`grid gap-5 ${compact ? "" : "sm:grid-cols-2"}`}>
-        <Field id={`${id}-name`} label="Name" error={err.name}>
-          <input id={`${id}-name`} name="name" autoComplete="name" defaultValue={v.name} className="field" aria-invalid={!!err.name} aria-describedby={err.name ? `${id}-name-err` : undefined} required />
+      <div className="form__grid">
+        <Field id={`${id}-name`} label="Name" error={errors.name}>
+          <input id={`${id}-name`} name="name" autoComplete="name" className="field" required {...describe("name")} />
         </Field>
-        <Field id={`${id}-company`} label="Company" error={err.company}>
-          <input id={`${id}-company`} name="company" autoComplete="organization" defaultValue={v.company} className="field" aria-invalid={!!err.company} aria-describedby={err.company ? `${id}-company-err` : undefined} required />
+        <Field id={`${id}-company`} label="Company" error={errors.company}>
+          <input id={`${id}-company`} name="company" autoComplete="organization" className="field" required {...describe("company")} />
         </Field>
-        <Field id={`${id}-phone`} label="Phone" error={err.phone}>
-          <div className="flex gap-2">
+        <Field id={`${id}-phone`} label="Phone" error={errors.phone}>
+          <div className="form__phone">
             <label htmlFor={`${id}-dial`} className="sr-only">
               Country code
             </label>
-            <select id={`${id}-dial`} name="dial" defaultValue={v.dial || "+92"} className="field !w-[104px] shrink-0 !px-3">
+            <select id={`${id}-dial`} name="dial" defaultValue="+92" className="field">
               {DIAL.map(([val, label]) => (
                 <option key={val} value={val}>
                   {label}
                 </option>
               ))}
             </select>
-            <input
-              id={`${id}-phone`}
-              name="phone"
-              type="tel"
-              inputMode="tel"
-              autoComplete="tel-national"
-              placeholder="300 1234567"
-              defaultValue={v.phone}
-              className="field"
-              aria-invalid={!!err.phone}
-              aria-describedby={err.phone ? `${id}-phone-err` : undefined}
-              required
-            />
+            <input id={`${id}-phone`} name="phone" type="tel" inputMode="tel" autoComplete="tel-national" placeholder="300 1234567" className="field" required {...describe("phone")} />
           </div>
         </Field>
-        <Field id={`${id}-email`} label="Work email" error={err.email}>
-          <input id={`${id}-email`} name="email" type="email" autoComplete="email" defaultValue={v.email} className="field" aria-invalid={!!err.email} aria-describedby={err.email ? `${id}-email-err` : undefined} required />
+        <Field id={`${id}-email`} label="Work email" error={errors.email}>
+          <input id={`${id}-email`} name="email" type="email" autoComplete="email" className="field" required {...describe("email")} />
         </Field>
       </div>
 
-      <fieldset aria-describedby={err.fleet ? `${id}-fleet-err` : undefined}>
-        <legend className="mb-2 text-[15px] font-medium">Fleet size</legend>
-        <div className="grid grid-cols-4 gap-2">
+      <fieldset className="form__set" {...(errors.fleet ? { "aria-describedby": `${id}-fleet-err` } : {})}>
+        <legend>Fleet size</legend>
+        <div className="form__fleet">
           {FLEET.map((f) => (
-            <label key={f} className="relative cursor-pointer">
-              <input type="radio" name="fleet" value={f} defaultChecked={v.fleet === f} className="peer sr-only" required />
-              <span className="flex min-h-[48px] items-center justify-center rounded-lg border border-grey-200 bg-white text-[15px] font-medium tabular-nums transition-colors hover:border-grey-400 peer-checked:border-ink-900 peer-checked:bg-ink-900 peer-checked:text-white peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-red-500">
-                {FLEET_LABEL[f]}
-              </span>
+            <label key={f} className="opt">
+              <input type="radio" name="fleet" value={f} required />
+              <span className="num">{FLEET_LABEL[f]}</span>
             </label>
           ))}
         </div>
-        {err.fleet && <ErrorText id={`${id}-fleet-err`}>{err.fleet}</ErrorText>}
+        {errors.fleet && <ErrorText id={`${id}-fleet-err`}>{errors.fleet}</ErrorText>}
       </fieldset>
 
-      <fieldset>
-        <legend className="mb-2 text-[15px] font-medium">
-          Interested in <span className="font-normal text-grey-600">(optional)</span>
+      <fieldset className="form__set">
+        <legend>
+          Interested in <span className="form__opt">(optional)</span>
         </legend>
-        <div className="flex flex-wrap gap-2">
+        <div className="form__chips">
           {INTERESTS.map((it) => (
-            <label key={it} className="relative cursor-pointer">
-              <input type="checkbox" name="interests" value={it} defaultChecked={selected.includes(it)} className="peer sr-only" />
-              <span className="inline-flex min-h-[44px] items-center rounded-full border border-grey-200 bg-white px-4 text-[15px] font-medium transition-colors hover:border-grey-400 peer-checked:border-red-500 peer-checked:bg-red-050 peer-checked:text-red-600 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-red-500">
-                {it}
-              </span>
+            <label key={it} className="opt opt--chip">
+              <input type="checkbox" name="interests" value={it} defaultChecked={service === it} />
+              <span>{it}</span>
             </label>
           ))}
         </div>
       </fieldset>
 
-      <Field id={`${id}-city`} label="City" error={err.city}>
-        <input id={`${id}-city`} name="city" list={`${id}-cities`} autoComplete="address-level2" defaultValue={v.city} className="field" aria-invalid={!!err.city} aria-describedby={err.city ? `${id}-city-err` : undefined} required />
+      <Field id={`${id}-city`} label="City" error={errors.city}>
+        <input id={`${id}-city`} name="city" list={`${id}-cities`} autoComplete="address-level2" className="field" required {...describe("city")} />
         <datalist id={`${id}-cities`}>
           {CITIES.map((c) => (
             <option key={c} value={c} />
@@ -137,24 +204,19 @@ export default function DemoForm({ location = "page", service, caseSlug, compact
         </datalist>
       </Field>
 
-      {SITE_KEY && (
-        <>
-          <Script src="https://challenges.cloudflare.com/turnstile/v0/api.js" strategy="lazyOnload" />
-          <div className="cf-turnstile" data-sitekey={SITE_KEY} data-size="invisible" />
-        </>
-      )}
-
-      <button type="submit" disabled={pending} className="btn btn-primary w-full !min-h-[54px] text-[17px] disabled:opacity-70">
+      <button type="submit" disabled={pending} className="btn btn--signal btn--block form__submit">
         {pending ? (
           <>
-            <Loader2 size={18} className="animate-spin" aria-hidden="true" /> Sending…
+            <Loader2 size={18} className="spin" aria-hidden="true" /> Sending…
           </>
         ) : (
-          "Book my live demo"
+          <>
+            Book my live demo <ArrowRight size={18} />
+          </>
         )}
       </button>
-      <p id={`${id}-note`} className="t-small -mt-2 text-center text-grey-600">
-        No spam. We only use your details to arrange the demo.
+      <p id={`${id}-note`} className="form__note mono">
+        No spam. {site.callbackPromise}
       </p>
     </form>
   );
@@ -162,10 +224,8 @@ export default function DemoForm({ location = "page", service, caseSlug, compact
 
 function Field({ id, label, error, children }) {
   return (
-    <div>
-      <label htmlFor={id} className="mb-2 block text-[15px] font-medium">
-        {label}
-      </label>
+    <div className="form__field">
+      <label htmlFor={id}>{label}</label>
       {children}
       {error && <ErrorText id={`${id}-err`}>{error}</ErrorText>}
     </div>
@@ -174,7 +234,7 @@ function Field({ id, label, error, children }) {
 
 function ErrorText({ id, children }) {
   return (
-    <p id={id} className="mt-1.5 text-[14px] font-medium text-red-600">
+    <p id={id} className="form__err">
       {children}
     </p>
   );

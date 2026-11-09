@@ -1,4 +1,4 @@
-// Industry pages (spec §7.1; "Industry" model in §9.2).
+// Industry pages .
 
 export const industries = [
   {

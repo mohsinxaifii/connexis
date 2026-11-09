@@ -1,0 +1,458 @@
+/* Connexis — "Night Shift" design system.
+   Night: asphalt + sodium amber. Day: warm paper + ink. Connexis red is the alert signal only. */
+:root {
+  --night: #0b0c0e;
+  --night-2: #121418;
+  --night-3: #1b1e23;
+  --chalk: #ece8e0;
+  --chalk-2: #a6a39b;
+  --rule-n: rgba(236, 232, 224, 0.13);
+
+  --paper: #ebe5d9;
+  --paper-2: #e2dacb;
+  --paper-3: #d8cfbe;
+  --ink: #111214;
+  --ink-2: #57544d;
+  --rule-p: rgba(17, 18, 20, 0.15);
+
+  --sodium: #f5a524;
+  --signal: #e5322a;
+  --signal-ink: #c4231b;
+  --ok: #46c98a;
+
+  --f-display: "Funnel Display", ui-sans-serif, system-ui, sans-serif;
+  --f-body: "Funnel Sans", ui-sans-serif, system-ui, sans-serif;
+  --f-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --radius: 14px;
+
+  --gutter: clamp(20px, 4vw, 64px);
+  --max: 1480px;
+  --nav-h: 88px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-io: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* theme-dependent, switched by [data-theme] */
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --fg-2: var(--ink-2);
+  --rule: var(--rule-p);
+  --red: var(--signal-ink);
+}
+
+[data-theme="night"] {
+  --bg: var(--night);
+  --fg: var(--chalk);
+  --fg-2: var(--chalk-2);
+  --rule: var(--rule-n);
+  --red: var(--signal);
+  background: var(--bg);
+  color: var(--fg);
+}
+[data-theme="paper"] {
+  --bg: var(--paper);
+  --fg: var(--ink);
+  --fg-2: var(--ink-2);
+  --rule: var(--rule-p);
+  --red: var(--signal-ink);
+  background: var(--bg);
+  color: var(--fg);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: transparent;
+  background: var(--night);
+}
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 17px/1.6 var(--f-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+@media (min-width: 900px) {
+  body {
+    font-size: 18px;
+  }
+}
+img,
+svg,
+canvas,
+video {
+  display: block;
+  max-width: 100%;
+}
+img {
+  height: auto;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+button {
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+ul,
+ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+h1,
+h2,
+h3,
+h4,
+p,
+figure,
+dl,
+dd,
+blockquote {
+  margin: 0;
+}
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--f-display);
+  font-weight: 650;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+p {
+  text-wrap: pretty;
+}
+::selection {
+  background: var(--sodium);
+  color: var(--night);
+}
+:focus {
+  outline: none;
+}
+:focus-visible {
+  outline: 2px solid var(--sodium);
+  outline-offset: 3px;
+}
+
+.skip {
+  position: fixed;
+  left: 12px;
+  top: -60px;
+  z-index: 300;
+  background: var(--sodium);
+  color: var(--night);
+  padding: 10px 14px;
+  font-weight: 600;
+}
+.skip:focus {
+  top: 12px;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ------------------------------------------------------------------ layout */
+.wrap {
+  width: 100%;
+  max-width: var(--max);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+.section {
+  position: relative;
+  padding-block: clamp(52px, 6vw, 92px);
+}
+/* two sections in the same theme read as one band: no double gap */
+.section[data-theme="paper"] + .section[data-theme="paper"],
+.section[data-theme="night"] + .section[data-theme="night"] {
+  padding-top: 0;
+}
+.section--tight {
+  padding-block: clamp(40px, 4.5vw, 64px);
+}
+.rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: 0;
+}
+
+/* ------------------------------------------------------------------ type */
+.d-xxl,
+.d-xl,
+.d-l,
+.d-m,
+.d-s {
+  font-family: var(--f-display);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+.d-xxl {
+  font-size: clamp(44px, 7.4vw, 132px);
+  line-height: 0.95;
+}
+.d-xl {
+  font-size: clamp(38px, 5.4vw, 96px);
+  line-height: 0.98;
+}
+.d-l {
+  font-size: clamp(30px, 3.8vw, 62px);
+  line-height: 1.02;
+}
+.d-m {
+  font-size: clamp(26px, 2.7vw, 42px);
+  line-height: 1.05;
+}
+.d-s {
+  font-size: clamp(21px, 1.9vw, 30px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+}
+.lead {
+  font-size: clamp(18px, 1.5vw, 22px);
+  line-height: 1.5;
+  color: var(--fg-2);
+  max-width: 34em;
+}
+.body-2 {
+  color: var(--fg-2);
+}
+/* small supporting text: captions, meta, figures */
+.mono {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+/* section eyebrow */
+.tag {
+  display: inline-block;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--red);
+}
+[data-theme="night"] .tag {
+  color: var(--sodium);
+}
+.num {
+  font-variant-numeric: tabular-nums;
+}
+.red {
+  color: var(--red);
+}
+.amber {
+  color: var(--sodium);
+}
+.ln {
+  padding-bottom: 0.04em;
+}
+
+/* ------------------------------------------------------------------ buttons */
+.btn {
+  --b: var(--fg);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 54px;
+  padding: 0 24px;
+  font: 700 16px/1 var(--f-body);
+  white-space: nowrap;
+  border-radius: 10px;
+  transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+.btn svg {
+  transition: transform 0.45s var(--ease);
+}
+.btn:hover svg {
+  transform: translateX(4px);
+}
+.btn--signal {
+  --b: var(--signal);
+  background: var(--signal);
+  color: #fff;
+}
+.btn--signal:hover {
+  background: #ff3d33;
+}
+.btn--glass {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  color: #fff;
+  backdrop-filter: blur(10px);
+}
+.btn--glass:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+.btn--line {
+  border: 1px solid var(--rule);
+  color: var(--fg);
+}
+.btn--line:hover {
+  border-color: var(--fg);
+}
+.btn--solid {
+  background: var(--fg);
+  color: var(--bg);
+}
+.btn--sm {
+  min-height: 42px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+.btn--block {
+  width: 100%;
+}
+
+.ulink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat;
+  padding-bottom: 3px;
+  transition: background-size 0.5s var(--ease);
+}
+.ulink:hover {
+  background-size: 0 1px;
+  background-position: 100% 100%;
+}
+.ulink svg {
+  transition: transform 0.45s var(--ease);
+}
+.ulink:hover svg {
+  transform: translate(3px, -3px);
+}
+
+/* ------------------------------------------------------------------ media */
+.photo {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  background: var(--night-3);
+}
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo--grade img {
+  filter: saturate(0.85) contrast(1.05);
+}
+/* On night sections photos are pulled into the sodium palette so daylight shots do not glare. */
+[data-theme="night"] .photo--grade img {
+  filter: grayscale(0.35) brightness(0.88) contrast(1.08);
+}
+[data-theme="night"] .photo--grade::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(245, 165, 36, 0.22), rgba(11, 12, 14, 0.15));
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+.blend {
+  mix-blend-mode: multiply;
+}
+
+/* HUD corner brackets around any box */
+.brackets {
+  position: relative;
+}
+.brackets::before,
+.brackets::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1.5px solid var(--sodium);
+  pointer-events: none;
+  z-index: 2;
+}
+.brackets::before {
+  left: -1px;
+  top: -1px;
+  border-right: 0;
+  border-bottom: 0;
+}
+.brackets::after {
+  right: -1px;
+  bottom: -1px;
+  border-left: 0;
+  border-top: 0;
+}
+
+.dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ok);
+  box-shadow: 0 0 0 0 rgba(70, 201, 138, 0.6);
+  animation: ping 2s infinite;
+}
+.dot--red {
+  background: var(--signal);
+  animation-name: ping-red;
+}
+@keyframes ping {
+  70% {
+    box-shadow: 0 0 0 8px rgba(70, 201, 138, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(70, 201, 138, 0);
+  }
+}
+@keyframes ping-red {
+  0% {
+    box-shadow: 0 0 0 0 rgba(229, 50, 42, 0.6);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(229, 50, 42, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(229, 50, 42, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
