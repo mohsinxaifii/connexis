@@ -20,27 +20,54 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Two versions share one Pages site:
+    #   /     -> the frozen v1 site, built from the `v1` git tag
+    #   /v2/  -> the current main branch (noindex, so it doesn't compete with v1 in search)
+    env:
+      # Defaults to /<repo>/ for github.io. With a custom domain, set the BASE_PATH variable to /.
+      ROOT_BASE: ${{ vars.BASE_PATH || format('/{0}/', github.event.repository.name) }}
+      VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+      VITE_GTM_ID: ${{ vars.VITE_GTM_ID }}
+      VITE_WEB3FORMS_KEY: ${{ vars.VITE_WEB3FORMS_KEY }}
+      VITE_LEAD_WEBHOOK_URL: ${{ vars.VITE_LEAD_WEBHOOK_URL }}
+      VITE_WHATSAPP: ${{ vars.VITE_WHATSAPP }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: v1
+          path: v1
+      - uses: actions/checkout@v4
+        with:
+          path: v2
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-      - run: npm ci
-      - run: npm run build
+          cache-dependency-path: |
+            v1/package-lock.json
+            v2/package-lock.json
+      - name: Build v1 (site root)
+        working-directory: v1
         env:
-          # Defaults to /<repo>/ for github.io. With a custom domain, set the BASE_PATH variable to /.
-          BASE_PATH: ${{ vars.BASE_PATH || format('/{0}/', github.event.repository.name) }}
-          VITE_SITE_URL: ${{ vars.VITE_SITE_URL }}
+          BASE_PATH: ${{ env.ROOT_BASE }}
           VITE_NOINDEX: ${{ vars.VITE_NOINDEX }}
-          VITE_GTM_ID: ${{ vars.VITE_GTM_ID }}
-          VITE_WEB3FORMS_KEY: ${{ vars.VITE_WEB3FORMS_KEY }}
-          VITE_LEAD_WEBHOOK_URL: ${{ vars.VITE_LEAD_WEBHOOK_URL }}
-          VITE_WHATSAPP: ${{ vars.VITE_WHATSAPP }}
+        run: npm ci && npm run build
+      - name: Build v2 (/v2/)
+        working-directory: v2
+        env:
+          BASE_PATH: ${{ env.ROOT_BASE }}v2/
+          VITE_NOINDEX: "1"
+        run: npm ci && npm run build
+      - name: Combine
+        run: |
+          mkdir -p site
+          cp -r v1/dist/. site/
+          mkdir -p site/v2
+          cp -r v2/dist/. site/v2/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: site
 
   deploy:
     needs: build
