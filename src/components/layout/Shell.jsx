@@ -5,6 +5,7 @@ import { gsap, ScrollTrigger, reducedMotion } from "@/lib/motion";
 import Header from "./Header";
 import Footer from "./Footer";
 import { Wipe, Consent } from "./Overlay";
+import Motion from "./Motion";
 import { track } from "@/lib/analytics";
 
 export default function Shell() {
@@ -56,6 +57,7 @@ export default function Shell() {
       <Footer />
       <Wipe />
       <Consent />
+      <Motion />
     </>
   );
 }

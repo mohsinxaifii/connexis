@@ -16,9 +16,9 @@ export const industries = [
     intro:
       "Distribution runs on beat plans, outlet visits and distributor fleets you rarely see. Connexis puts all of it on one dashboard.",
     pains: [
-      { title: "Paying for idle vehicles", text: "Vehicles sit in the yard while the lease and driver costs keep running." },
-      { title: "Missed outlet visits", text: "Beat plans say an outlet was served; nothing proves it." },
-      { title: "No view of distributor fleets", text: "Each distributor runs its own vehicles, out of sight of head office." },
+      { icon: "CircleParking", title: "Paying for idle vehicles", text: "Vehicles sit in the yard while the lease and driver costs keep running." },
+      { icon: "MapPinOff", title: "Missed outlet visits", text: "Beat plans say an outlet was served; nothing proves it." },
+      { icon: "EyeOff", title: "No view of distributor fleets", text: "Each distributor runs its own vehicles, out of sight of head office." },
     ],
     solutions: ["fleet-management-system", "vehicle-tracking-system", "temperature-monitoring"],
     portal: "dashboard",
@@ -55,9 +55,9 @@ export const industries = [
     intro:
       "Hundreds of generators, hundreds of fill records written by hand. Connexis measures each tank directly and shows every site on one screen.",
     pains: [
-      { title: "Genset fuel theft", text: "Fuel leaves the tank without anyone noticing until the bill arrives." },
-      { title: "No filling records", text: "Fills are logged on paper, if they are logged at all." },
-      { title: "Unknown running hours", text: "Maintenance and fuel budgets are based on guesses." },
+      { icon: "HandCoins", title: "Genset fuel theft", text: "Fuel leaves the tank without anyone noticing until the bill arrives." },
+      { icon: "NotebookPen", title: "No filling records", text: "Fills are logged on paper, if they are logged at all." },
+      { icon: "Hourglass", title: "Unknown running hours", text: "Maintenance and fuel budgets are based on guesses." },
     ],
     solutions: ["generator-fuel-monitoring", "fuel-monitoring-system", "cctv-surveillance"],
     portal: "genset",
@@ -94,9 +94,9 @@ export const industries = [
     intro:
       "Insurance is Connexis's largest segment, at 18.8% of the portfolio. We fit and support trackers on insured and leased vehicles across Pakistan.",
     pains: [
-      { title: "Theft risk", text: "Every insured or leased car is exposure on your book." },
-      { title: "Slow recovery", text: "Without a live location, recovery depends on luck." },
-      { title: "Claim disputes", text: "No independent record of where and how a vehicle was driven." },
+      { icon: "KeyRound", title: "Theft risk", text: "Every insured or leased car is exposure on your book." },
+      { icon: "Snail", title: "Slow recovery", text: "Without a live location, recovery depends on luck." },
+      { icon: "Scale", title: "Claim disputes", text: "No independent record of where and how a vehicle was driven." },
     ],
     solutions: ["vehicle-tracking-system", "car-tracker", "ai-dashcam-mdvr"],
     portal: "map",
@@ -133,9 +133,9 @@ export const industries = [
     intro:
       "Long routes, unaccounted stops and cargo you cannot see. Connexis tracks the truck, the driver and the container.",
     pains: [
-      { title: "Route deviation", text: "Trucks leave the agreed route and you find out from the customer." },
-      { title: "Driver behaviour", text: "Harsh driving and fatigue put cargo and people at risk." },
-      { title: "Unaccounted stops and containers", text: "Stops go unexplained and containers go dark." },
+      { icon: "Split", title: "Route deviation", text: "Trucks leave the agreed route and you find out from the customer." },
+      { icon: "Siren", title: "Driver behaviour", text: "Harsh driving and fatigue put cargo and people at risk." },
+      { icon: "PackageSearch", title: "Unaccounted stops and containers", text: "Stops go unexplained and containers go dark." },
     ],
     solutions: ["vehicle-tracking-system", "ai-dashcam-mdvr", "asset-tracking"],
     portal: "map",
@@ -172,9 +172,9 @@ export const industries = [
     intro:
       "Product goes missing in transit and hazardous loads need careful drivers. Connexis watches the tank, the route and the cab.",
     pains: [
-      { title: "Product pilferage in transit", text: "Litres disappear between the depot and the station." },
-      { title: "Unsafe driving with hazardous loads", text: "One harsh manoeuvre can be a disaster." },
-      { title: "Unexplained stops", text: "Stops off-route are where pilferage happens." },
+      { icon: "Droplets", title: "Product pilferage in transit", text: "Litres disappear between the depot and the station." },
+      { icon: "Flame", title: "Unsafe driving with hazardous loads", text: "One harsh manoeuvre can be a disaster." },
+      { icon: "OctagonPause", title: "Unexplained stops", text: "Stops off-route are where pilferage happens." },
     ],
     solutions: ["fuel-monitoring-system", "vehicle-tracking-system", "ai-dashcam-mdvr"],
     portal: "fuel",
@@ -211,9 +211,9 @@ export const industries = [
     intro:
       "Municipal fleets have to prove coverage, street by street. Connexis built a waste-segment portal for exactly that.",
     pains: [
-      { title: "Missed collection routes", text: "Complaints arrive before the report does." },
-      { title: "Idle sweepers and dumpers", text: "Vehicles stand still during shifts." },
-      { title: "No proof of coverage", text: "Councils and citizens want evidence." },
+      { icon: "Trash2", title: "Missed collection routes", text: "Complaints arrive before the report does." },
+      { icon: "Timer", title: "Idle sweepers and dumpers", text: "Vehicles stand still during shifts." },
+      { icon: "FileQuestionMark", title: "No proof of coverage", text: "Councils and citizens want evidence." },
     ],
     solutions: ["fleet-management-system", "vehicle-tracking-system"],
     portal: "map",

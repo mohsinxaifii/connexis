@@ -2,7 +2,7 @@ import { ArrowUpRight } from "lucide-react";
 import Link from "@/components/ui/Link";
 import { Photo } from "@/components/ui/Bits";
 import { Head, useReveal } from "@/components/ui/Page";
-import { CrossX } from "./Crossouts";
+import { Problem } from "@/components/ui/Markers";
 import Icon from "@/components/ui/Icon";
 import { industries } from "@/content/industries";
 import { industryPhoto } from "@/content/media";
@@ -30,7 +30,7 @@ export default function IndustriesGrid() {
                   <ul className="ind__pains">
                     {ind.pains.map((p) => (
                       <li key={p.title}>
-                        <CrossX /> {p.title}
+                        <Problem icon={p.icon} size="sm" /> {p.title}
                       </li>
                     ))}
                   </ul>

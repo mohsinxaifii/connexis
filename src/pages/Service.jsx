@@ -7,7 +7,7 @@ import { PageHero, Head, useReveal } from "@/components/ui/Page";
 import Icon from "@/components/ui/Icon";
 import Showcase from "@/components/ui/Showcase";
 import { ServiceCard, CaseCard } from "@/components/ui/Cards";
-import { CrossX } from "@/components/home/Crossouts";
+import { Problem } from "@/components/ui/Markers";
 import { FaqBlock, DemoCta } from "@/components/home/Closing";
 import { servicePhoto, serviceField, industryPhoto } from "@/content/media";
 import { getCase } from "@/content/caseStudies";
@@ -67,10 +67,10 @@ export default function Service({ service: s }) {
             <div>
             <Head id="pairs-t" tag="Before and after" title="What changes in the first week." />
             <ul className="pairs">
-              {s.pairs.map(([before, after]) => (
+              {s.pairs.map(([before, after, icon]) => (
                 <li key={before} className="pairs__row rv">
                   <p className="pairs__before">
-                    <CrossX />
+                    <Problem icon={icon} />
                     <span>{before}</span>
                   </p>
                   <ArrowRight className="pairs__arrow" size={22} aria-hidden="true" />

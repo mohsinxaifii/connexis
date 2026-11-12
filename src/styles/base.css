@@ -1,29 +1,61 @@
 /* Connexis — "Night Shift" design system.
    Night: asphalt + sodium amber. Day: warm paper + ink. Connexis red is the alert signal only. */
 :root {
-  --night: #0b0c0e;
-  --night-2: #121418;
-  --night-3: #1b1e23;
-  --chalk: #ece8e0;
-  --chalk-2: #a6a39b;
-  --rule-n: rgba(236, 232, 224, 0.13);
+  /* Plain black, neutral greys, Connexis red as the only accent. */
+  --night: #0a0a0a;
+  --night-2: #121212;
+  --night-3: #1a1a1a;
+  --chalk: #f2f2f2;
+  --chalk-2: #9e9e9e;
+  --rule-n: rgba(255, 255, 255, 0.1);
 
-  --paper: #ebe5d9;
-  --paper-2: #e2dacb;
-  --paper-3: #d8cfbe;
-  --ink: #111214;
-  --ink-2: #57544d;
-  --rule-p: rgba(17, 18, 20, 0.15);
+  /* Both bands are the same black now; the names stay so the theme switch keeps working. */
+  --paper: #0a0a0a;
+  --paper-2: #121212;
+  --paper-3: #1a1a1a;
+  --ink: #f2f2f2;
+  --ink-2: #9e9e9e;
+  --rule-p: rgba(255, 255, 255, 0.1);
+  --card: #111111;
+  --card-hi: #171717;
+  --line: rgba(255, 255, 255, 0.14);
 
-  --sodium: #f5a524;
-  --signal: #e5322a;
-  --signal-ink: #c4231b;
+  /* the lighter red reads on graphite; kept under its old name so night accents switch over */
+  --sodium: #ff4b40;
+  --signal: #e1251b;
+  --signal-ink: #ff5a4f; /* red text that reads on the dark bands */
   --ok: #46c98a;
 
-  --f-display: "Funnel Display", ui-sans-serif, system-ui, sans-serif;
-  --f-body: "Funnel Sans", ui-sans-serif, system-ui, sans-serif;
+  --f-display: "Archivo", ui-sans-serif, system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --w-display: 600;
   --f-mono: ui-monospace, "SFMono-Regular", Menlo, monospace;
-  --radius: 14px;
+
+  /* Type scale. Every text style on the site uses these; no one-off sizes or weights.
+     Weights: 400 for running text, 600 for anything that is a title, label, button or number. */
+  --fs-micro: 11px; /* only inside the miniature product screens */
+  --fs-xs: 13px; /* labels, meta, captions */
+  --fs-sm: 15px; /* secondary text, card copy, nav, buttons */
+  --fs-md: 17px; /* body */
+  --fs-lg: clamp(18px, 1.5vw, 21px); /* lead paragraphs */
+  --fs-title: clamp(19px, 1.5vw, 22px); /* card and list titles */
+  --fs-d5: clamp(22px, 1.9vw, 28px);
+  --fs-d4: clamp(26px, 2.7vw, 40px);
+  --fs-d3: clamp(30px, 3.8vw, 58px);
+  --fs-d2: clamp(36px, 5.2vw, 88px);
+  --fs-d1: clamp(42px, 7vw, 120px);
+  --fs-stat: clamp(40px, 5vw, 80px); /* big figures */
+
+  --lh-tight: 1; /* large display, figures */
+  --lh-snug: 1.1; /* display headings */
+  --lh-title: 1.3; /* titles, labels */
+  --lh-ui: 1.45; /* small text */
+  --lh-body: 1.6;
+
+  --ls-display: -0.03em;
+  --ls-title: -0.015em;
+
+  --radius: 4px;
 
   --gutter: clamp(20px, 4vw, 64px);
   --max: 1480px;
@@ -82,14 +114,15 @@ body {
   margin: 0;
   background: var(--paper);
   color: var(--ink);
-  font: 400 17px/1.6 var(--f-body);
+  font: 400 var(--fs-md) / var(--lh-body) var(--f-body);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  overflow-wrap: break-word;
   overflow-x: clip;
 }
 @media (min-width: 900px) {
-  body {
-    font-size: 18px;
+  :root {
+    --fs-md: 18px;
   }
 }
 img,
@@ -141,16 +174,29 @@ h2,
 h3,
 h4 {
   font-family: var(--f-display);
-  font-weight: 650;
-  letter-spacing: -0.02em;
+  font-weight: var(--w-display);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-title);
   text-wrap: balance;
 }
-p {
+/* Even rag, no one-word last lines. */
+p,
+li,
+dd,
+dt,
+figcaption,
+blockquote,
+label,
+legend {
   text-wrap: pretty;
 }
+b,
+strong {
+  font-weight: 600;
+}
 ::selection {
-  background: var(--sodium);
-  color: var(--night);
+  background: var(--signal);
+  color: #fff;
 }
 :focus {
   outline: none;
@@ -183,6 +229,24 @@ p {
   white-space: nowrap;
 }
 
+/* Product mockups (alert toast, portal screens) stay light, like a real device screen. */
+.hero__alert,
+.hero__screen,
+.pf__panel:not(.is-dark),
+.screen__body,
+.iso {
+  --ink: #16181b;
+  --ink-2: #50555c;
+  --paper: #e9eaec;
+  --paper-2: #dfe1e4;
+  --fg: #16181b;
+  --fg-2: #50555c;
+  --rule: rgba(22, 24, 27, 0.15);
+  --signal-ink: #c4231b;
+  --red: #c4231b;
+  color: #16181b;
+}
+
 /* ------------------------------------------------------------------ layout */
 .wrap {
   width: 100%;
@@ -194,10 +258,13 @@ p {
   position: relative;
   padding-block: clamp(52px, 6vw, 92px);
 }
-/* two sections in the same theme read as one band: no double gap */
-.section[data-theme="paper"] + .section[data-theme="paper"],
-.section[data-theme="night"] + .section[data-theme="night"] {
+/* every band is the same black, so neighbouring sections share one gap instead of stacking two */
+.section + .section {
   padding-top: 0;
+}
+/* the first section after a page hero starts close under it */
+.phero + .section {
+  padding-top: clamp(24px, 3vw, 40px);
 }
 .section--tight {
   padding-block: clamp(40px, 4.5vw, 64px);
@@ -213,34 +280,43 @@ p {
 .d-xl,
 .d-l,
 .d-m,
-.d-s {
+.d-s,
+.t-title {
   font-family: var(--f-display);
-  font-weight: 650;
-  letter-spacing: -0.035em;
+  font-weight: var(--w-display);
+  letter-spacing: var(--ls-display);
+  text-wrap: balance;
 }
 .d-xxl {
-  font-size: clamp(44px, 7.4vw, 132px);
-  line-height: 0.95;
+  font-size: var(--fs-d1);
+  line-height: var(--lh-tight);
 }
 .d-xl {
-  font-size: clamp(38px, 5.4vw, 96px);
-  line-height: 0.98;
+  font-size: var(--fs-d2);
+  line-height: var(--lh-tight);
 }
 .d-l {
-  font-size: clamp(30px, 3.8vw, 62px);
-  line-height: 1.02;
+  font-size: var(--fs-d3);
+  line-height: var(--lh-snug);
 }
 .d-m {
-  font-size: clamp(26px, 2.7vw, 42px);
-  line-height: 1.05;
+  font-size: var(--fs-d4);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-title);
 }
 .d-s {
-  font-size: clamp(21px, 1.9vw, 30px);
-  line-height: 1.12;
-  letter-spacing: -0.02em;
+  font-size: var(--fs-d5);
+  line-height: var(--lh-snug);
+  letter-spacing: var(--ls-title);
+}
+/* card and list titles */
+.t-title {
+  font-size: var(--fs-title);
+  line-height: var(--lh-title);
+  letter-spacing: var(--ls-title);
 }
 .lead {
-  font-size: clamp(18px, 1.5vw, 22px);
+  font-size: var(--fs-lg);
   line-height: 1.5;
   color: var(--fg-2);
   max-width: 34em;
@@ -250,20 +326,85 @@ p {
 }
 /* small supporting text: captions, meta, figures */
 .mono {
-  font-size: 13px;
+  font-size: var(--fs-xs);
   font-weight: 600;
-  line-height: 1.4;
+  line-height: var(--lh-ui);
   font-variant-numeric: tabular-nums;
 }
-/* section eyebrow */
+/* Small label above a heading. In section heads it becomes a numbered marker: "01 ———". */
 .tag {
   display: inline-block;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--red);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  line-height: var(--lh-ui);
+  color: var(--fg-2);
 }
-[data-theme="night"] .tag {
-  color: var(--sodium);
+body {
+  counter-reset: shead;
+}
+.shead .tag {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  counter-increment: shead;
+}
+.shead .tag::before {
+  content: counter(shead, decimal-leading-zero);
+  color: var(--red);
+  font-variant-numeric: tabular-nums;
+}
+.shead .tag::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, var(--signal) 0 48px, var(--rule) 48px);
+  transform-origin: left;
+}
+/* the rule runs to the content's right edge, past a narrow heading block */
+.wrap > .shead:not(.shead--center) .tag {
+  width: calc(min(100vw, var(--max)) - 2 * var(--gutter));
+  max-width: calc(100vw - 2 * var(--gutter));
+}
+/* with JS, the rule draws in when its section arrives and the number drops into place */
+html.js .shead .tag::after {
+  transform: scaleX(0);
+  transition: transform 1.4s var(--ease) 0.15s;
+}
+html.js .shead .tag::before {
+  display: inline-block;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.8s var(--ease), opacity 0.8s var(--ease);
+}
+html.js .shead .tag.is-in::after {
+  transform: scaleX(1);
+}
+html.js .shead .tag.is-in::before {
+  transform: none;
+  opacity: 1;
+}
+
+/* cursor spotlight on cards (added by the motion layer on fine pointers) */
+.has-spot {
+  position: relative;
+  isolation: isolate;
+}
+.spot {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, 0.07), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.4s var(--ease);
+}
+.has-spot:hover .spot {
+  opacity: 1;
+}
+.shead--center .tag {
+  margin-inline: auto;
 }
 .num {
   font-variant-numeric: tabular-nums;
@@ -288,9 +429,9 @@ p {
   gap: 12px;
   min-height: 54px;
   padding: 0 24px;
-  font: 700 16px/1 var(--f-body);
+  font: 600 var(--fs-sm) / 1 var(--f-body);
   white-space: nowrap;
-  border-radius: 10px;
+  border-radius: var(--radius);
   transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
 }
 .btn svg {
@@ -330,7 +471,7 @@ p {
 .btn--sm {
   min-height: 42px;
   padding: 0 16px;
-  font-size: 14px;
+  font-size: var(--fs-sm);
 }
 .btn--block {
   width: 100%;
@@ -379,7 +520,7 @@ p {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(245, 165, 36, 0.22), rgba(11, 12, 14, 0.15));
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.1));
   mix-blend-mode: soft-light;
   pointer-events: none;
 }

@@ -6,7 +6,7 @@ import Link from "@/components/ui/Link";
 import { PageHero, Head, useReveal } from "@/components/ui/Page";
 import Screen from "@/components/ui/Screen";
 import { ServiceCard, CaseCard, LogoWall } from "@/components/ui/Cards";
-import { CrossX } from "@/components/home/Crossouts";
+import { Problem } from "@/components/ui/Markers";
 import IndustriesGrid from "@/components/home/IndustriesGrid";
 import { FaqBlock, DemoCta } from "@/components/home/Closing";
 import { industries, getIndustry } from "@/content/industries";
@@ -97,13 +97,13 @@ export function Industry() {
 
       <section className="section" data-theme="paper" aria-labelledby="pain-t">
         <div className="wrap">
-          <Head id="pain-t" tag="The leaks" title="What we cross out first." />
+          <Head id="pain-t" tag="The leaks" title="What we catch first." />
           <ul className="bigpains">
             {ind.pains.map((p, i) => (
               <li key={p.title} className="bigpains__item rv">
                 <span className="mono">{String(i + 1).padStart(2, "0")}</span>
                 <h3 className="d-s">
-                  <CrossX /> {p.title}
+                  <Problem icon={p.icon} size="lg" /> {p.title}
                 </h3>
                 <p>{p.text}</p>
               </li>
@@ -155,8 +155,9 @@ export function Industry() {
 
       <FaqBlock items={ind.faqs} title={`${ind.name}: common questions.`} />
 
-      <section className="section section--tight" data-theme="paper" aria-label="Other industries">
+      <section className="section" data-theme="paper" aria-labelledby="more-t">
         <div className="wrap">
+          <Head id="more-t" tag="More industries" title="Other industries we cover." size="d-m" />
           <ul className="indlist">
             {others.map((o) => (
               <li key={o.slug}>

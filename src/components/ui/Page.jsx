@@ -18,7 +18,8 @@ export function Crumbs({ items }) {
   );
 }
 
-// Night hero used by every inner page: breadcrumbs, a tag, the H1, intro, CTAs and a photo.
+// Inner-page hero, editorial: breadcrumb, a wide headline, then intro and actions on one ruled row,
+// then a cinematic image across the full content width. Everything shares the page grid's edges.
 export function PageHero({ crumbs, tag, title, intro, photo, aside, ctas = true, demoService, children, size = "d-xl" }) {
   const root = useRef(null);
   useGSAP(
@@ -29,34 +30,38 @@ export function PageHero({ crumbs, tag, title, intro, photo, aside, ctas = true,
         .timeline({ delay: 0.1 })
         .from(split.lines, { yPercent: 110, duration: 1.1, ease: "expo.out", stagger: 0.08, onComplete: () => split.revert() })
         .from(root.current.querySelectorAll(".phero__fade"), { y: 24, opacity: 0, duration: 0.9, ease: "expo.out", stagger: 0.07 }, 0.25)
-        .from(root.current.querySelector(".phero__media"), { clipPath: "inset(0 0 100% 0)", duration: 1.3, ease: "expo.inOut" }, 0);
-      const img = root.current.querySelector(".phero__media img");
-      if (img) gsap.to(img, { yPercent: 12, ease: "none", scrollTrigger: { trigger: root.current, start: "top top", end: "bottom top", scrub: true } });
+        .from(root.current.querySelector(".phero__media"), { clipPath: "inset(0 0 100% 0)", duration: 1.3, ease: "expo.inOut" }, 0.15);
+      const img = root.current.querySelector(".phero__photo img");
+      // the image is 115% tall; it starts lifted and settles as it scrolls, so its frame never shows
+      if (img) gsap.fromTo(img, { yPercent: -12 }, { yPercent: 0, ease: "none", scrollTrigger: { trigger: root.current.querySelector(".phero__media"), start: "top bottom", end: "bottom top", scrub: true } });
     },
     { scope: root }
   );
+  const showTag = tag && tag !== crumbs?.at(-1)?.name;
   return (
-    <section ref={root} className={`phero ${photo || aside ? "phero--media" : ""}`} data-theme="night">
-      <div className="wrap phero__grid">
-        <div className="phero__copy">
-          {crumbs && (
-            <div className="phero__fade">
-              <Crumbs items={crumbs} />
-            </div>
-          )}
-          {tag && <p className="tag phero__fade">{tag}</p>}
-          <h1 className={`${size} phero__title`}>{title}</h1>
-          {intro && <p className="lead phero__fade">{intro}</p>}
-          {ctas && (
-            <div className="phero__ctas phero__fade">
-              <Link to="#demo" className="btn btn--signal" data-track="demo_cta_click" data-location="page-hero">
-                Book a demo <ArrowRight size={18} />
-              </Link>
-              {typeof ctas === "object" && ctas}
-            </div>
-          )}
-          {children}
-        </div>
+    <section ref={root} className={`phero ${photo || aside ? "phero--media" : ""} ${photo ? "" : "phero--nophoto"}`} data-theme="night">
+      <div className="wrap">
+        {crumbs && (
+          <div className="phero__crumbs phero__fade">
+            <Crumbs items={crumbs} />
+            {showTag && <span className="phero__tag">{tag}</span>}
+          </div>
+        )}
+        <h1 className={`${size} phero__title`}>{title}</h1>
+        {(intro || ctas) && (
+          <div className="phero__row">
+            {intro && <p className="lead phero__fade">{intro}</p>}
+            {ctas && (
+              <div className="phero__ctas phero__fade">
+                <Link to="#demo" className="btn btn--signal" data-track="demo_cta_click" data-location="page-hero">
+                  Book a demo <ArrowRight size={18} />
+                </Link>
+                {typeof ctas === "object" && ctas}
+              </div>
+            )}
+          </div>
+        )}
+        {children}
         {(photo || aside) && (
           <div className="phero__media">
             {photo && <Photo photo={photo} eager className="phero__photo" />}

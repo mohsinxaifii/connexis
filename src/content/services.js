@@ -28,9 +28,9 @@ export const services = [
       "See where every vehicle is, how fast it is moving and where it stopped, live on your dashboard and phone. Connexis has installed 150,000+ tracking devices since 2015.",
     heroVisual: "map",
     pairs: [
-      ["Drivers take detours you never see", "Every route is recorded and can be played back"],
-      ["Vehicles are used after hours", "Unauthorised-use alerts reach you the moment ignition turns on"],
-      ["You call drivers to ask where they are", "The live map answers before you pick up the phone"],
+      ["Drivers take detours you never see", "Every route is recorded and can be played back", "Split"],
+      ["Vehicles are used after hours", "Unauthorised-use alerts reach you the moment ignition turns on", "Moon"],
+      ["You call drivers to ask where they are", "The live map answers before you pick up the phone", "PhoneCall"],
     ],
     features: [
       { icon: "Map", title: "Live map", text: "Follow one vehicle or the whole fleet in real time." },
@@ -86,9 +86,9 @@ export const services = [
       "Know which vehicles work, which sit idle and which drivers cost you money. Connexis builds dashboards around how your business runs: by franchise, area manager or distributor.",
     heroVisual: "dashboard",
     pairs: [
-      ["You pay for vehicles that barely move", "Daily trip counts expose under-used vehicles"],
-      ["Outlet visits are claimed, not proven", "Geofenced outlets log every visit automatically"],
-      ["Distributors run fleets you cannot see", "Each distributor gets a portal; you see them all"],
+      ["You pay for vehicles that barely move", "Daily trip counts expose under-used vehicles", "CircleParking"],
+      ["Outlet visits are claimed, not proven", "Geofenced outlets log every visit automatically", "MapPinOff"],
+      ["Distributors run fleets you cannot see", "Each distributor gets a portal; you see them all", "EyeOff"],
     ],
     features: [
       { icon: "Filter", title: "Custom dashboards", text: "Filter by franchise, DSM, ASM, distributor and vehicle." },
@@ -147,9 +147,9 @@ export const services = [
     heroVisual: "fuel",
     heroImage: { src: "/images/devices/fuel-level-sensor.webp", alt: "Connexis fuel level sensor probe with connector cable", w: 640, h: 960 },
     pairs: [
-      ["Fuel disappears between fill-ups", "Every drop is logged with time and location"],
-      ["Fuel bills don't match the kilometres", "Consumption per km or per hour, per vehicle"],
-      ["Theft is found weeks later", "Drain alerts arrive by email and app straight away"],
+      ["Fuel disappears between fill-ups", "Every drop is logged with time and location", "Ghost"],
+      ["Fuel bills don't match the kilometres", "Consumption per km or per hour, per vehicle", "Receipt"],
+      ["Theft is found weeks later", "Drain alerts arrive by email and app straight away", "CalendarClock"],
     ],
     features: [
       { icon: "Cpu", title: "European controllers", text: "European-manufactured controller devices." },
@@ -212,9 +212,9 @@ export const services = [
       "Every generator, every branch, one screen: tank level, fills, fuel burned and running hours. Built for organisations running dozens or hundreds of gensets.",
     heroVisual: "genset",
     pairs: [
-      ["Fill records are written by hand", "Every fill is measured by the sensor"],
-      ["Running hours are a guess", "Hours and litres per hour, per generator"],
-      ["Each branch reports differently", "Head office sees every site, grouped by region"],
+      ["Fill records are written by hand", "Every fill is measured by the sensor", "NotebookPen"],
+      ["Running hours are a guess", "Hours and litres per hour, per generator", "Hourglass"],
+      ["Each branch reports differently", "Head office sees every site, grouped by region", "Shapes"],
     ],
     features: [
       { icon: "CalendarCheck", title: "Daily opening and closing", text: "Tank level at the start and end of every day." },
@@ -269,9 +269,9 @@ export const services = [
     heroVisual: "dashcam",
     heroImage: { src: "/images/devices/ai-dashcam.webp", alt: "Connexis AI dashcam units, front, side and windscreen-mounted views", w: 1024, h: 1024 },
     pairs: [
-      ["You hear about crashes after the fact", "Crash and harsh-driving warnings arrive live"],
-      ["Disputes come down to one word against another", "Evidence clips settle them"],
-      ["Tired drivers keep driving", "Fatigue and yawning are flagged in the cab"],
+      ["You hear about crashes after the fact", "Crash and harsh-driving warnings arrive live", "CarFront"],
+      ["Disputes come down to one word against another", "Evidence clips settle them", "MessagesSquare"],
+      ["Tired drivers keep driving", "Fatigue and yawning are flagged in the cab", "Coffee"],
     ],
     features: [
       { icon: "Video", title: "ADAS road camera", text: "Lane and road deviation and short-distance warnings." },
@@ -326,9 +326,9 @@ export const services = [
       "Know the temperature inside every reefer truck, chiller and store, and get an alert the moment it leaves your safe range.",
     heroVisual: "temperature",
     pairs: [
-      ["Spoilage is found at delivery", "Alerts fire the moment a zone leaves range"],
-      ["Audit logs are filled in by hand", "Temperature history is recorded automatically"],
-      ["Door opens cause false alarms", "Duration rules and alarm delays cut the noise"],
+      ["Spoilage is found at delivery", "Alerts fire the moment a zone leaves range", "ThermometerSun"],
+      ["Audit logs are filled in by hand", "Temperature history is recorded automatically", "ClipboardPen"],
+      ["Door opens cause false alarms", "Duration rules and alarm delays cut the noise", "DoorOpen"],
     ],
     features: [
       { icon: "Layers", title: "Four sensors", text: "Up to four per unit for multi-zone monitoring." },
@@ -379,9 +379,9 @@ export const services = [
       "Portable solar trackers follow containers, trailers and vessels for long periods with no power supply, on cellular or optional satellite networks.",
     heroVisual: "asset",
     pairs: [
-      ["Containers go dark between ports", "Solar power keeps the tracker reporting"],
-      ["Doors are opened in transit", "Door sensors and tamper alarms report it"],
-      ["Rough handling damages cargo", "Motion sensors flag dumping and rollover"],
+      ["Containers go dark between ports", "Solar power keeps the tracker reporting", "BatteryLow"],
+      ["Doors are opened in transit", "Door sensors and tamper alarms report it", "DoorOpen"],
+      ["Rough handling damages cargo", "Motion sensors flag dumping and rollover", "Vibrate"],
     ],
     features: [
       { icon: "Sun", title: "Solar charging", text: "Plus a 12,000mAh battery for long periods." },

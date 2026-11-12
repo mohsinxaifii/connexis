@@ -35,6 +35,16 @@ export default function Header() {
   const [open, setOpen] = useState(null);
   const [mobile, setMobile] = useState(false);
   const closeTimer = useRef(0);
+  const barRef = useRef(null);
+
+  // The menu panel matches the bar's width, which depends on its content.
+  useEffect(() => {
+    const bar = barRef.current;
+    if (!bar || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => bar.parentElement.style.setProperty("--bar-w", `${bar.offsetWidth}px`));
+    ro.observe(bar);
+    return () => ro.disconnect();
+  }, []);
 
   useEffect(() => {
     setOpen(null);
@@ -103,7 +113,7 @@ export default function Header() {
       className={`nav nav--${effectiveTone} ${compact ? "is-compact" : ""} ${hidden && !open && !mobile ? "is-hidden" : ""}`}
       data-open={open || undefined}
     >
-      <div className="nav__bar">
+      <div ref={barRef} className="nav__bar">
         <Link to="/" className="nav__logo" aria-label="Connexis home">
           <Logo />
         </Link>
@@ -125,14 +135,12 @@ export default function Header() {
         </nav>
 
         <div className="nav__end">
-          <a href={`tel:${site.phones[0].tel}`} className="nav__call" data-track="call_click" data-location="header">
-            <span className="nav__callicon">
-              <Phone size={15} />
-            </span>
-            <span>
-              <small>Call sales</small>
-              <b>{site.phones[0].label}</b>
-            </span>
+          <a href={site.customerLogin} target="_blank" rel="nofollow noopener" className="nav__login">
+            Login <ArrowUpRight size={14} aria-hidden="true" />
+          </a>
+          <a href={`tel:${site.phones[0].tel}`} className="nav__call" data-track="call_click" data-location="header" aria-label={`Call sales on ${site.phones[0].label}`}>
+            <Phone size={15} aria-hidden="true" />
+            <span className="nav__callnum">{site.phones[0].label}</span>
           </a>
           <Link to="/request-a-demo/" className="btn btn--signal btn--sm nav__cta" data-track="demo_cta_click" data-location="header">
             Book a demo
